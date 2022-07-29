@@ -6,35 +6,47 @@
 
 #include<iostream>
 
-enum map_type {
+enum Map_Type {
     EMPTY,
     WALL,
-    PACMAN,
+    PAC_MAN,
     GHOST ,
     NORMAL_FEED
-};
+}; // contain all moods in the map
+
+enum Shapes
+{
+    SQUARE_RECTANGLE,
+    T ,
+    STRAIGHT ,
+    NOTHING
+}; // contain all shape moods 
 
 
 void Insert_Shape(const std::pair<unsigned short ,unsigned short> & 
                 ,const std::pair<unsigned short ,unsigned short> &
-                ,const map_type & = WALL
+                ,const Map_Type & = WALL
                 ,const std::pair<unsigned short ,unsigned short> & = std::make_pair(0 ,0) );
 
 
 void Straight_Shape(const std::pair<unsigned short ,unsigned short> & 
                    ,const std::pair<unsigned short ,unsigned short> &
-                   ,const map_type & = WALL);
+                   ,const Map_Type & = WALL);
                    
 
 void Square_Rectangle_Shape( const std::pair<unsigned short ,unsigned short> & 
                             ,const std::pair<unsigned short ,unsigned short> &
-                            ,const map_type & = WALL);
+                            ,const Map_Type & = WALL);
 
 
 void T_Shape(const std::pair<unsigned short ,unsigned short> & 
             ,const std::pair<unsigned short ,unsigned short> &
-            ,const map_type & = WALL
+            ,const Map_Type & = WALL
             ,const std::pair<unsigned short ,unsigned short> & = std::make_pair(0 ,0) );
+
+Shapes Return_Shape_Type(const std::pair<unsigned short , unsigned short > & 
+                        ,const std::pair<unsigned short , unsigned short> &
+                        ,const std::pair<unsigned short , unsigned short> &);
 
 void Set_Map_Empty();
 void Print_Map();
