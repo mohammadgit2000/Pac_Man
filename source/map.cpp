@@ -1,46 +1,35 @@
 #include"../include/map.hpp"
 
-enum map_type map_matrix[ MAP_HEIGHT ][ MAP_WIDTH ];
+enum Map_Type map_matrix[ MAP_HEIGHT ][ MAP_WIDTH ];
 
 void Insert_Shape(const std::pair<unsigned short ,unsigned short> & begin
                 ,const std::pair<unsigned short ,unsigned short> & end
-                , const map_type & type 
+                , const Map_Type & type 
                 ,const std::pair<unsigned short , unsigned short> & third
                 ) // begin and end argument are the two points of the line (square or rectangle)
 { // if we want create T shape , we need third argument .
 
-    if (begin.first == end.first) // (0 ,3) , (0 ,5) mean that Between these two points we have type of map (enum).
-    { // In the direction of the Axis X
-        Straight_Shape(begin ,end ,type);
-    }
-
-    else if (begin.second == end.second) // (3 ,0) , (3 ,10) mean that Between these tow points we have type of map (enum).
-    { /// In the direction of the Axis Y
-        Straight_Shape(begin ,end ,type);
-    }
-
-    else if (third.first == 0 && third.second == 0) // in this section we create square or rectangle shape
+    switch (Return_Shape_Type(begin ,end ,third))
     {
-        Square_Rectangle_Shape(begin ,end ,type);
-    }
-
-    else if(third.first != 0 && third.second != 0)
-    {
-        T_Shape(begin ,end ,type ,third);
-    }
-
-    else
-    {
-        std::cout << "Error: Insert_Line: begin and end are not in the same line" << std::endl;
+        case SQUARE_RECTANGLE:
+            Square_Rectangle_Shape(begin , end , type);
+            break;
+        case STRAIGHT:
+            Straight_Shape(begin , end , type);
+            break;
+        case T:
+            T_Shape(begin , end , type , third);
+            break;
+        case NOTHING:
+            break;
     }
 }
 
 
 
-
 void Straight_Shape(const std::pair<unsigned short ,unsigned short> & begin
                    ,const std::pair<unsigned short ,unsigned short> & end
-                   ,const map_type & type = WALL) // create straight line of map_type (enum)
+                   ,const Map_Type & type ) // create straight line of map_type (enum)
 {
     if(begin.first == end.first)  // In the direction of the Axis X
     {
@@ -63,7 +52,7 @@ void Straight_Shape(const std::pair<unsigned short ,unsigned short> & begin
 
 void Square_Rectangle_Shape( const std::pair<unsigned short ,unsigned short> & begin
                             ,const std::pair<unsigned short ,unsigned short> & end
-                            ,const map_type & type = WALL)
+                            ,const Map_Type & type )
 {
     for (size_t i = 0; i <= end.first ; i++)
     {
@@ -77,11 +66,59 @@ void Square_Rectangle_Shape( const std::pair<unsigned short ,unsigned short> & b
 
 void T_Shape(const std::pair<unsigned short ,unsigned short> & begin
             ,const std::pair<unsigned short ,unsigned short> & end
-            ,const map_type & type = WALL
-            ,const std::pair<unsigned short ,unsigned short> & third = std::make_pair(0 ,0) )
+            ,const Map_Type & type 
+            ,const std::pair<unsigned short ,unsigned short> & third )
 {
-    Straight_Shape(begin ,end ,type);
-    Straight_Shape( { begin.first ,third.second } ,third ,type );
+    switch (Return_Shape_Type(begin ,end ,{0 ,0}))
+    {
+        case SQUARE_RECTANGLE:
+            std::cout << "SQUARE_RECTANGLE" << std::endl;
+            Square_Rectangle_Shape(begin , end , type);
+            break;
+
+        case STRAIGHT:
+            std::cout << "STRAIGHT" << std::endl;
+            Straight_Shape(begin , end , type);
+            break;
+
+        case NOTHING:
+            std::cout << "NOTHING" << std::endl;
+            return;
+    }
+
+    Straight_Shape( { third.first ,begin.second } ,third ,type );
+}
+
+
+
+Shapes Return_Shape_Type(const std::pair<unsigned short , unsigned short > & begin 
+                        ,const std::pair<unsigned short , unsigned short> & end
+                        ,const std::pair<unsigned short , unsigned short> & third)
+{
+    if (begin.first == end.first)
+    {
+        return STRAIGHT;
+    }
+    
+    else if (begin.second == end.second)
+    {
+        return STRAIGHT;
+    }
+    
+    else if (third.first == 0 && third.second == 0)
+    {
+        return SQUARE_RECTANGLE;
+    }
+    
+    else if(third.first != 0 && third.second != 0)
+    {
+        return T;
+    }
+    
+    else
+    {
+        return NOTHING;
+    }
 }
 
 void Set_Map_Empty()
