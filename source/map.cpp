@@ -1,5 +1,6 @@
 #include"../include/map.hpp"
 
+/*   -    -     -    -    -   S_I_N_G_L_E_T-O-N  P_A_T_T_E_R_N   -    -    -    -*/
 Map * Map::instance = nullptr; // initializer of static member
 
 Map * Map :: get_instance() // singleton pattern
@@ -11,10 +12,10 @@ Map * Map :: get_instance() // singleton pattern
     return instance;
 }
 
-
-void Map:: Insert_Shape(const std::pair<unsigned short ,unsigned short> & begin
-                ,const std::pair<unsigned short ,unsigned short> & end
-                , const Map_Type & type 
+/*   -    -     -    -    -   S_I_N_G_L_E_T-O-N  P_A_T_T_E_R_N   -    -    -    -*/
+void Map:: Insert_Shape(const pair_type & begin
+                ,const pair_type & end
+                , const Map_Enum & type 
                 ,const std::pair<unsigned short , unsigned short> & third )
 // begin and end argument are the two points of the line (square or rectangle)
 { // if we want create T shape , we need third argument .
@@ -40,9 +41,9 @@ void Map:: Insert_Shape(const std::pair<unsigned short ,unsigned short> & begin
 
 
 
-void Map :: Insert_Straight_Shape(const std::pair<unsigned short ,unsigned short> & begin
-                   ,const std::pair<unsigned short ,unsigned short> & end
-                   ,const Map_Type & type ) // create straight line of map_type (enum)
+void Map :: Insert_Straight_Shape(const pair_type & begin
+                   ,const pair_type & end
+                   ,const Map_Enum & type ) // create straight line of map_type (enum)
 {
     if(begin.first == end.first)  // In the direction of the Axis X
     {
@@ -62,9 +63,9 @@ void Map :: Insert_Straight_Shape(const std::pair<unsigned short ,unsigned short
 }
 
 
-void Map :: Insert_Square_Rectangle_Shape( const std::pair<unsigned short ,unsigned short> & begin
-                            ,const std::pair<unsigned short ,unsigned short> & end
-                            ,const Map_Type & type )
+void Map :: Insert_Square_Rectangle_Shape( const pair_type & begin
+                            ,const pair_type & end
+                            ,const Map_Enum & type ) // create square rectangle in map
 {
     for (size_t i = 0; i <= end.first ; i++)
     {
@@ -76,10 +77,10 @@ void Map :: Insert_Square_Rectangle_Shape( const std::pair<unsigned short ,unsig
 }
 
 
-void Map :: Insert_T_Shape(const std::pair<unsigned short ,unsigned short> & begin
-            ,const std::pair<unsigned short ,unsigned short> & end
-            ,const Map_Type & type 
-            ,const std::pair<unsigned short ,unsigned short> & third )
+void Map :: Insert_T_Shape(const pair_type & begin
+            ,const pair_type & end
+            ,const Map_Enum & type 
+            ,const pair_type & third ) // create t shape in map
 {
     switch (Return_Shape_Type(begin ,end ,{0 ,0}))
     {
@@ -103,9 +104,9 @@ void Map :: Insert_T_Shape(const std::pair<unsigned short ,unsigned short> & beg
 
 
 
-Shapes Map :: Return_Shape_Type(const std::pair<unsigned short , unsigned short > & begin 
-                        ,const std::pair<unsigned short , unsigned short> & end
-                        ,const std::pair<unsigned short , unsigned short> & third) const
+Shapes_Enum Map :: Return_Shape_Type(const pair_type & begin 
+                        ,const pair_type & end
+                        ,const pair_type & third) const
 {
     if (begin.first == end.first)
     {
@@ -133,6 +134,8 @@ Shapes Map :: Return_Shape_Type(const std::pair<unsigned short , unsigned short 
     }
 }
 
+
+
 void Map :: Set_Map_Empty()
 {
     for(unsigned short i = 0 ; i < MAP_HEIGHT ; i++)
@@ -143,6 +146,8 @@ void Map :: Set_Map_Empty()
         }
     }
 }
+
+
 
 void Map :: Print_Map() const
 {
@@ -155,3 +160,36 @@ void Map :: Print_Map() const
         std::cout << std::endl;
     }
 }
+
+
+/*   -     -     -     -     -     -   A_D_D  W_A_L_L  L_O_C_A_T_I_O_N     -     -    -     -    - */
+void Map :: Add_Location_Square_Rectangle_Wall(const queue_type & temp)
+{ // add wall location to map
+    square_rectangle_wall.push(std::make_pair( std::make_pair(temp.front().first.first , temp.front().first.second)
+                                            ,std::make_pair(temp.front().second.first , temp.front().second.second) ) );
+}
+
+
+void Map :: Add_Location_T_Shape_Wall(const t_queue_type & temp)
+{ // add wall location to map
+    t_shape_wall.push(std::make_pair( std::make_pair(temp.front().first.first , temp.front().first.second)
+                                    ,temp.front().second));
+}
+
+
+void Map :: Add_Location_Straight_Wall(const queue_type & temp)
+{ // add wall location to map
+    straight_wall.push(std::make_pair(std::make_pair(temp.front().first.first , temp.front().first.second)
+                                                    ,std::make_pair(temp.front().second.first , temp.front().second.second)));
+}
+
+
+void Map :: Add_Location_Empty_Area(const pair_type & temp)
+{ // add empty area location to map
+    empty_area.push(std::make_pair(temp.first , temp.second));
+}
+
+
+
+
+/*   -     -     -     -     -     -   A_D_D  W_A_L_L  L_O_C_A_T_I_O_N     -     -    -     -    - */
