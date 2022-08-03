@@ -1,6 +1,6 @@
 #include"../include/map.hpp"
 
-/*   -    -     -    -    -   S_I_N_G_L_E_T-O-N  P_A_T_T_E_R_N   -    -    -    -*/
+/*   -    -     -    -    -   S_I_N_G_L_E_T_O_N  P_A_T_T_E_R_N   -    -    -    -*/
 Map * Map::instance = nullptr; // initializer of static member
 
 Map * Map :: get_instance() // singleton pattern
@@ -12,34 +12,7 @@ Map * Map :: get_instance() // singleton pattern
     return instance;
 }
 
-/*   -    -     -    -    -   S_I_N_G_L_E_T-O-N  P_A_T_T_E_R_N   -    -    -    -*/
-void Map:: Insert_Shape(const pair_type & begin
-                ,const pair_type & end
-                , const Map_Enum & type 
-                ,const std::pair<unsigned short , unsigned short> & third )
-// begin and end argument are the two points of the line (square or rectangle)
-{ // if we want create T shape , we need third argument .
-
-    switch (Return_Shape_Type(begin ,end ,third)) // diagnose shape type 
-    {
-        case SQUARE_RECTANGLE:
-            Insert_Square_Rectangle_Shape(begin , end , type); // create square or rectangle shape
-            break;
-
-        case STRAIGHT:
-            Insert_Straight_Shape(begin , end , type); // create straight line shape
-            break;
-
-        case T:
-            Insert_T_Shape(begin , end , type , third); // create T shape
-            break;
-
-        case NOTHING:
-            break;
-    }
-}
-
-
+/*   -    -     -    -    -   I_N_S_E_R_T_I-O-N    -     -     -   -    -    -    -*/
 
 void Map :: Insert_Straight_Shape(const pair_type & begin
                    ,const pair_type & end
@@ -67,9 +40,9 @@ void Map :: Insert_Square_Rectangle_Shape( const pair_type & begin
                             ,const pair_type & end
                             ,const Map_Enum & type ) // create square rectangle in map
 {
-    for (size_t i = 0; i <= end.first ; i++)
+    for (size_t i = begin.first; i <= end.first ; i++)
     {
-        for (size_t j = 0; j <= end.second ; j++)
+        for (size_t j = begin.second; j <= end.second ; j++)
         {
             map_matrix[ i ][ j ] = type;
         }
@@ -77,61 +50,12 @@ void Map :: Insert_Square_Rectangle_Shape( const pair_type & begin
 }
 
 
-void Map :: Insert_T_Shape(const pair_type & begin
-            ,const pair_type & end
-            ,const Map_Enum & type 
-            ,const pair_type & third ) // create t shape in map
+void Map :: Insert_T_Shape(const queue_type & line_one
+            ,const queue_type & line_two
+            ,const Map_Enum & type ) // create t shape in map
 {
-    switch (Return_Shape_Type(begin ,end ,{0 ,0}))
-    {
-        case SQUARE_RECTANGLE:
-            std::cout << "SQUARE_RECTANGLE" << std::endl;
-            Insert_Square_Rectangle_Shape(begin , end , type);
-            break;
-
-        case STRAIGHT:
-            std::cout << "STRAIGHT" << std::endl;
-            Insert_Straight_Shape(begin , end , type);
-            break;
-
-        case NOTHING:
-            std::cout << "NOTHING" << std::endl;
-            return;
-    }
-
-    Insert_Straight_Shape( { third.first ,begin.second } ,third ,type );
-}
-
-
-
-Shapes_Enum Map :: Return_Shape_Type(const pair_type & begin 
-                        ,const pair_type & end
-                        ,const pair_type & third) const
-{
-    if (begin.first == end.first)
-    {
-        return STRAIGHT;
-    }
-    
-    else if (begin.second == end.second)
-    {
-        return STRAIGHT;
-    }
-    
-    else if (third.first == 0 && third.second == 0)
-    {
-        return SQUARE_RECTANGLE;
-    }
-    
-    else if(third.first != 0 && third.second != 0)
-    {
-        return T;
-    }
-    
-    else
-    {
-        return NOTHING;
-    }
+    Insert_Square_Rectangle_Shape(line_one.front().first , line_one.front().second , type); // create square rectangle shape
+    Insert_Square_Rectangle_Shape(line_two.front().first , line_two.front().second , type); // create straight line shape
 }
 
 
@@ -170,10 +94,10 @@ void Map :: Add_Location_Square_Rectangle_Wall(const queue_type & temp)
 }
 
 
-void Map :: Add_Location_T_Shape_Wall(const t_queue_type & temp)
+void Map :: Add_Location_T_Shape_Wall(const queue_type & temp)
 { // add wall location to map
     t_shape_wall.push(std::make_pair( std::make_pair(temp.front().first.first , temp.front().first.second)
-                                    ,temp.front().second));
+                                    ,std::make_pair(temp.front().second.first , temp.front().second.second) ) );
 }
 
 
@@ -193,3 +117,64 @@ void Map :: Add_Location_Empty_Area(const pair_type & temp)
 
 
 /*   -     -     -     -     -     -   A_D_D  W_A_L_L  L_O_C_A_T_I_O_N     -     -    -     -    - */
+
+void Map :: Default_Wall_Locations()
+{
+
+}
+
+
+void Map :: Default_Wall_Square_Rectangle_Locations()
+{
+    square_rectangle_wall.push( std::make_pair( std::make_pair(2 ,2) , std::make_pair(4 , 5) ) );
+    Insert_Square_Rectangle_Shape(square_rectangle_wall.back().first , square_rectangle_wall.back().second , WALL);
+    Insert_Square_Rectangle_Shape(std::make_pair(2 , MAP_WIDTH - square_rectangle_wall.back().second.second - 1 ) ,
+                                  std::make_pair(4 , MAP_WIDTH - square_rectangle_wall.back().first.second - 1 ) , WALL);
+
+    square_rectangle_wall.push( std::make_pair( std::make_pair(2 ,7) , std::make_pair(4 , 11) ) );
+    Insert_Square_Rectangle_Shape(square_rectangle_wall.back().first , square_rectangle_wall.back().second , WALL);
+    Insert_Square_Rectangle_Shape(std::make_pair(2 ,MAP_WIDTH - square_rectangle_wall.back().second.second - 1) ,
+                                  std::make_pair(4 ,MAP_WIDTH - square_rectangle_wall.back().first.second - 1) , WALL);
+
+    square_rectangle_wall.push( std::make_pair( std::make_pair(6 ,2) , std::make_pair(7 , 5) ) );
+    Insert_Square_Rectangle_Shape(square_rectangle_wall.back().first , square_rectangle_wall.back().second , WALL);
+    Insert_Square_Rectangle_Shape(std::make_pair(6 ,MAP_WIDTH - square_rectangle_wall.back().second.second - 1) , 
+                                  std::make_pair(7 ,MAP_WIDTH - square_rectangle_wall.back().first.second - 1) , WALL);
+
+    square_rectangle_wall.push( std::make_pair( std::make_pair(9 ,0) , std::make_pair(13 , 5) ) );
+    Insert_Square_Rectangle_Shape(square_rectangle_wall.back().first , square_rectangle_wall.back().second , WALL);
+    Insert_Square_Rectangle_Shape(std::make_pair(9 ,MAP_WIDTH - square_rectangle_wall.back().second.second - 1) ,
+                                  std::make_pair(13 ,MAP_WIDTH - square_rectangle_wall.back().first.second - 1) , WALL);
+
+    square_rectangle_wall.push( std::make_pair( std::make_pair(15 ,0) , std::make_pair(19 , 5) ) );
+    Insert_Square_Rectangle_Shape(square_rectangle_wall.back().first , square_rectangle_wall.back().second , WALL);
+    Insert_Square_Rectangle_Shape(std::make_pair(15 ,MAP_WIDTH - square_rectangle_wall.back().second.second - 1) ,
+                                  std::make_pair(19 ,MAP_WIDTH - square_rectangle_wall.back().first.second - 1) , WALL);
+
+    square_rectangle_wall.push( std::make_pair( std::make_pair(21 ,7) , std::make_pair(22 , 11) ) );
+    Insert_Square_Rectangle_Shape(square_rectangle_wall.back().first , square_rectangle_wall.back().second , WALL);
+    Insert_Square_Rectangle_Shape(std::make_pair(21 ,MAP_WIDTH - square_rectangle_wall.back().second.second - 1) ,
+     std::make_pair(22 ,MAP_WIDTH - square_rectangle_wall.back().first.second - 1) , WALL);
+}
+
+
+
+void Map :: Default_Wall_T_Locations() // insert wall by default
+{
+    queue_type temp1 ,temp2;
+
+    temp1.push(std::make_pair(std::make_pair(6 ,7) , std::make_pair(13 , 8) ));
+    temp2.push(std::make_pair(std::make_pair(9 ,7) , std::make_pair(10 , 11) ));
+    
+    Insert_T_Shape(temp1, temp2 , WALL);
+
+    temp1.pop();
+    temp2.pop();
+
+    temp1.push(std::make_pair(std::make_pair(26 ,2) , std::make_pair(27 , 11) ));
+    temp2.push(std::make_pair(std::make_pair(26 ,7) , std::make_pair(23 , 8) ));
+
+    Insert_T_Shape(temp1, temp2 , WALL);
+
+
+}

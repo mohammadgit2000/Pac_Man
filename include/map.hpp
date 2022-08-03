@@ -1,7 +1,7 @@
 #if !defined(MAP_HPP)
 #define MAP_HPP
 
-#define MAP_WIDTH 27 // width of map 
+#define MAP_WIDTH 28 // width of map 
 #define MAP_HEIGHT 30 // height of map
 
 #include<iostream>
@@ -10,7 +10,6 @@
 typedef std::pair<unsigned short ,unsigned short> pair_type;
 
 typedef std::queue < std::pair < pair_type , pair_type > > queue_type;
-typedef std::queue < std::pair<pair_type ,unsigned short> > t_queue_type;
 typedef std::queue <pair_type> empty_queue_type;
 
 enum Map_Enum 
@@ -41,7 +40,7 @@ class Map
 
     queue_type square_rectangle_wall; // wall locations
 
-    t_queue_type t_shape_wall; // wall locations
+    queue_type t_shape_wall; // wall locations
 
     queue_type straight_wall; // wall locations
 
@@ -53,13 +52,6 @@ class Map
 
 
 /*    -     -     -     -    I_N_S_E_R_T_I_O_N  M_A_P    -     -      -      -     -     -*/
-
-    void Insert_Shape(const pair_type & 
-                ,const pair_type &
-                ,const Map_Enum & = WALL
-                ,const pair_type & = std::make_pair(0 ,0) );
-/*Insert Shape : in this function we diagnose Wall Shape and insert wall in map*/
-
 
 void Insert_Straight_Shape(const pair_type & 
                    ,const pair_type &
@@ -73,17 +65,10 @@ void Insert_Square_Rectangle_Shape( const pair_type &
 /* Square Rectangle : create rectangular or square shape  */
 
 
-void Insert_T_Shape(const pair_type & 
-            ,const pair_type &
-            ,const Map_Enum & = WALL
-            ,const pair_type & = std::make_pair(0 ,0) );
+void Insert_T_Shape(const queue_type &
+            ,const queue_type &
+            ,const Map_Enum & = WALL);
 /* T Shape : create T shape */
-
-
-Shapes_Enum Return_Shape_Type(const pair_type & 
-                        ,const pair_type &
-                        ,const pair_type &) const;
-/* Return Shape Type : return the shape type of the shape we want to create */
 
 
 void Set_Map_Empty(); // set all map to empty mood
@@ -96,7 +81,7 @@ void Print_Map() const; // print map
 /* Add Location Square Rectangle Wall : add wall locations to the queue */
 
     
-    void Add_Location_T_Shape_Wall(const t_queue_type &);
+    void Add_Location_T_Shape_Wall(const queue_type &);
 /* Add Location T Shape Wall : add wall locations to the queue */
 
     
@@ -109,8 +94,13 @@ void Print_Map() const; // print map
 
 
 /*   -     -     -     -     -     -   A_D_D  W_A_L_L  L_O_C_A_T_I_O_N     -     -    -     -    - */
-void Default_Wall_Locations();
+void Default_Wall_Locations(); // insert wall by default
 
+void Default_Wall_Square_Rectangle_Locations(); // insert wall by default
+
+void Default_Wall_T_Locations(); // insert wall by default
+
+void Symmetry_Wall_Insertion(); // insert wall symmetrical to the map
 
 };
 
